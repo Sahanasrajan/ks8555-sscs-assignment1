@@ -124,11 +124,14 @@ def consistency(prev_checkpoint, debug=False):
     proof = resp.json()
     if debug:
         print(json.dumps(proof, indent=4))
-
-    verify_consistency(DefaultHasher,
+    try:   
+        verify_consistency(DefaultHasher,
                        prev_checkpoint["treeSize"], latest["treeSize"],
                        proof["hashes"],
                        prev_checkpoint["rootHash"], latest["rootHash"])
+    except (RootMismatchError, ValueError) as e:
+        print(f"Consistency verification failed: {e}")
+        sys.exit(1)
     print("Consistency verification successful")
 
 
