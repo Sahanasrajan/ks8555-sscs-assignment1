@@ -8,7 +8,8 @@ from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
 from util import extract_public_key
-from util import extract_public_key, verify_artifact_signature
+from merkle_proof import (DefaultHasher, RootMismatchError, compute_leaf_hash,
+                          verify_consistency, verify_inclusion)
 from merkle_proof import DefaultHasher, verify_consistency, verify_inclusion, compute_leaf_hash
 
 REKOR_URL = "https://rekor.sigstore.dev/api/v1"
@@ -79,9 +80,14 @@ def inclusion(log_index, artifact_filepath, debug=False):
         sys.exit(1)
 
     proof, leaf_hash = get_verification_proof(log_index, debug)
-    verify_inclusion(DefaultHasher, proof["logIndex"], proof["treeSize"],
-                     leaf_hash, proof["hashes"], proof["rootHash"])
+    try:
+        verify_inclusion(DefaultHasher, proof["logIndex"], proof["treeSize"],
+                         leaf_hash, proof["hashes"], proof["rootHash"])
+    except (RootMismatchError, ValueError) as e:
+        print(f"Inclusion verification failed: {e}")
+        sys.exit(1)
     print("Offline verification successful")
+    
 
 
 def get_latest_checkpoint(debug=False):
