@@ -2,11 +2,12 @@ import argparse
 import base64
 import json
 import os
+import sys
 import requests
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives.serialization import load_pem_public_key
+from util import extract_public_key
 from util import extract_public_key, verify_artifact_signature
 from merkle_proof import DefaultHasher, verify_consistency, verify_inclusion, compute_leaf_hash
 
@@ -72,11 +73,10 @@ def inclusion(log_index, artifact_filepath, debug=False):
     certificate = base64.b64decode(sig_block["publicKey"]["content"])
 
     public_key = extract_public_key(certificate)
-    verify_artifact_signature(signature, public_key, artifact_filepath)
-    # the util function only prints on failure, so check again and stop here
+    
     if not signature_is_valid(signature, public_key, artifact_filepath):
         print("Verification failed: signature does not match artifact")
-        return
+        sys.exit(1)
 
     proof, leaf_hash = get_verification_proof(log_index, debug)
     verify_inclusion(DefaultHasher, proof["logIndex"], proof["treeSize"],
