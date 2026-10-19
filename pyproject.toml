@@ -22,7 +22,10 @@ dev = [
     "ruff (>=0.17.1,<0.18.0)",
     "mypy (>=2.4.0,<3.0.0)",
     "bandit (>=1.9.4,<2.0.0)",
-    "types-requests (>=2.33.0.20261006,<3.0.0.0)"
+    "types-requests (>=2.33.0.20261006,<3.0.0.0)",
+    "pytest (>=9.1.1,<10.0.0)",
+    "pytest-cov (>=7.1.0,<8.0.0)",
+    "pre-commit (>=4.7.0,<5.0.0)"
 ]
 [tool.poetry]
 package-mode = false
@@ -35,3 +38,10 @@ ignore_missing_imports = true
 
 [tool.bandit]
 exclude_dirs = [".venv", "tests", "part2-outputs"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "--cov=. --cov-report=term-missing"
+
+[tool.coverage.run]
+omit = ["tests/*"]
