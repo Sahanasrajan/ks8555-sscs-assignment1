@@ -1,0 +1,12 @@
+repos:
+  - repo: local
+    hooks:
+      - id: trufflehog
+        name: TruffleHog
+        description: Scan the staged changes of this commit for secrets
+        # --since-commit HEAD limits the scan to what is new in this commit,
+        # instead of the whole repository history
+        entry: bash -c 'trufflehog git file://. --since-commit HEAD --no-verification --no-update --fail'
+        language: system
+        pass_filenames: false
+        stages: ["pre-commit"]

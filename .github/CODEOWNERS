@@ -1,0 +1,8 @@
+# Default owner for everything in the repository
+*                   @Sahanasrajan
+
+# Verification logic and tests
+/main.py            @Sahanasrajan
+/merkle_proof.py    @Sahanasrajan
+/util.py            @Sahanasrajan
+/tests/             @Sahanasrajan
